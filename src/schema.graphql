@@ -9,11 +9,13 @@ input AuthorInput {
 }
 
 type Author {
+  _id: String!
   name: String
   age: Int
 }
 
 type Book {
+  _id: String!
   title: String
   author: Author
 }

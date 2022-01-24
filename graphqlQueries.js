@@ -24,3 +24,26 @@ const queries = {
       }
     }`
 }
+
+const withParams = {
+  addBook: {
+    query:
+      `mutation CreateBook ($input: BookInput!) {
+      addBook(input: $input) {
+        title
+        author {
+          name
+        }
+      }
+    }`,
+    params:
+      `mutation CreateBook ($input: BookInput!) {
+      addBook(input: $input) {
+        title
+        author {
+          name
+        }
+      }
+    }`
+  }
+}
