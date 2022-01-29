@@ -10,6 +10,10 @@ import path from 'path'
 import fs from 'fs'
 import resolvers from './resolvers/index.js'
 import { startDB } from './db.js';
+import jwt from 'jsonwebtoken'
+import { AuthenticationError } from 'apollo-server-errors';
+
+const jwtToken = process.env.JWT_TOKEN_KEY || 'alohamora'
 
 dotenv()
 const __dirname = path.resolve();
@@ -23,6 +27,25 @@ async function startApolloServer(typeDefs, resolvers) {
     typeDefs,
     resolvers,
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+    /*context: ({ req }) => {
+      // Note: This example uses the `req` argument to access headers,
+      // but the arguments received by `context` vary by integration.
+      // This means they vary for Express, Koa, Lambda, etc.
+      //
+      // To find out the correct arguments for a specific integration,
+      // see https://www.apollographql.com/docs/apollo-server/api/apollo-server/#middleware-specific-context-fields
+
+      // Get the user token from the headers.
+      const token = req.headers.authorization || '';
+
+      // Try to retrieve a user with the token
+      const user = getUser(token);
+
+      if (!user) throw new AuthenticationError('You must be logged in')
+
+      // Add the user to the context
+      return { user };
+    }*/
   });
 
   await server.start();
@@ -41,4 +64,14 @@ try {
   startApolloServer(typeDefs, resolvers)
 } catch (error) {
   console.log(error)
+}
+
+const getUser = (token) => {
+  try {
+    const user = jwt.verify(token, jwtToken)
+    return user
+  } catch (error) {
+    console.log(error)
+    return null
+  }
 }
